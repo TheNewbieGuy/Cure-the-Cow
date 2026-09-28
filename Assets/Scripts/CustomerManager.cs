@@ -32,24 +32,14 @@ public class CustomerManager : MonoBehaviour
     private CustomerController currentCustomer;
 
     private bool customerInside;
-
     private bool busy;
 
-    /// <summary>
-    /// Read-only access to the current customer's data, for scripts like
-    /// ZoomTarget that need to check symptoms without owning the
-    /// customer reference themselves.
-    /// </summary>
     public CustomerData GetCurrentCustomerData()
     {
         return currentCustomer != null
             ? currentCustomer.GetComponent<CustomerData>()
             : null;
     }
-
-    // =========================================================
-    // UNITY
-    // =========================================================
 
     void Awake()
     {
@@ -76,11 +66,14 @@ public class CustomerManager : MonoBehaviour
                 )
             ];
 
+        // IMPORTANT:
+        // Do NOT use spawnPoint.rotation.
+        // Customers always start at X=0, Y=180, Z=0.
         currentCustomer =
             Instantiate(
                 prefab,
                 spawnPoint.position,
-                spawnPoint.rotation
+                Quaternion.Euler(0f, 180f, 0f)
             );
 
         AssignCondition(currentCustomer);
@@ -109,10 +102,6 @@ public class CustomerManager : MonoBehaviour
 
         customerInside = true;
 
-        // Show the customer's intro dialog (if any) before inspection
-        // opens up. Inspection (and giving cures / raising symptoms) is
-        // deliberately blocked until the dialog is dismissed, since
-        // currentState only flips to Inspection after this finishes.
         CustomerData data =
             currentCustomer.GetComponent<CustomerData>();
 
@@ -122,7 +111,9 @@ public class CustomerManager : MonoBehaviour
             data.dialogLines.Count > 0)
         {
             yield return StartCoroutine(
-                DialogUI.Instance.ShowDialogRoutine(data.dialogLines)
+                DialogUI.Instance.ShowDialogRoutine(
+                    data.dialogLines
+                )
             );
         }
 
@@ -140,21 +131,14 @@ public class CustomerManager : MonoBehaviour
     // GIVE CURE
     // =========================================================
 
-    /// <summary>
-    /// Called by Interaction when the player clicks the current customer
-    /// while holding a givable item. Any accepted item - right or wrong -
-    /// dismisses the customer; the result is recorded via
-    /// NightManager.RecordCureResult. Returns true if the attempt was
-    /// accepted at all (so the caller knows to consume the held item),
-    /// false only if it wasn't a valid attempt in the first place (e.g.
-    /// not in Inspection state).
-    /// </summary>
     public bool TryGiveCure(PickupObject item)
     {
         if (currentState != ClinicState.Inspection)
             return false;
 
-        if (busy || currentCustomer == null || item == null)
+        if (busy ||
+            currentCustomer == null ||
+            item == null)
             return false;
 
         CustomerData data =
@@ -166,13 +150,19 @@ public class CustomerManager : MonoBehaviour
             return false;
 
         bool wasCorrectCure =
-            data.acceptedCureItemTypes.Contains(item.itemType);
+            data.acceptedCureItemTypes.Contains(
+                item.itemType
+            );
 
         Debug.Log(
-            wasCorrectCure ? "CORRECT CURE GIVEN" : "WRONG CURE GIVEN"
+            wasCorrectCure
+                ? "CORRECT CURE GIVEN"
+                : "WRONG CURE GIVEN"
         );
 
-        StartCoroutine(CustomerExitRoutine(wasCorrectCure));
+        StartCoroutine(
+            CustomerExitRoutine(wasCorrectCure)
+        );
 
         return true;
     }
@@ -210,9 +200,7 @@ public class CustomerManager : MonoBehaviour
 
         if (correct)
         {
-            Debug.Log(
-                "CORRECT DIAGNOSIS"
-            );
+            Debug.Log("CORRECT DIAGNOSIS");
 
             Debug.Log(
                 "Condition: " +
@@ -223,9 +211,7 @@ public class CustomerManager : MonoBehaviour
         }
         else
         {
-            Debug.Log(
-                "WRONG DIAGNOSIS"
-            );
+            Debug.Log("WRONG DIAGNOSIS");
 
             Debug.Log(
                 "Correct Condition: " +
@@ -240,7 +226,9 @@ public class CustomerManager : MonoBehaviour
     // CUSTOMER LEAVING
     // =========================================================
 
-    IEnumerator CustomerExitRoutine(bool cureWasCorrect)
+    IEnumerator CustomerExitRoutine(
+        bool cureWasCorrect
+    )
     {
         busy = true;
 
@@ -251,10 +239,17 @@ public class CustomerManager : MonoBehaviour
             "INSPECTION ENDED"
         );
 
-        NightManager.Instance.RecordCureResult(cureWasCorrect);
+        NightManager.Instance.RecordCureResult(
+            cureWasCorrect
+        );
 
         EvaluateDiagnosis();
 
+        // Turn the customer around BEFORE moving.
+        // Their X and Z rotation remain 0.
+        currentCustomer.TurnAround();
+
+        // Walk back to the spawn point.
         currentCustomer.MoveTo(
             spawnPoint.position
         );
@@ -324,17 +319,14 @@ public class CustomerManager : MonoBehaviour
             return;
         }
 
-        // Store the condition
         data.condition =
             selectedCondition.condition;
 
-        // Copy the condition's predefined symptoms
         data.symptoms =
             new List<Symptoms>(
                 selectedCondition.symptoms
             );
 
-        // Copy the accepted cure item type(s) and intro dialog lines
         data.acceptedCureItemTypes =
             new List<string>(
                 selectedCondition.acceptedCureItemTypes
@@ -356,12 +348,13 @@ public class CustomerManager : MonoBehaviour
 
         Debug.Log(
             "Accepted cure item types: " +
-            string.Join(", ", data.acceptedCureItemTypes)
+            string.Join(
+                ", ",
+                data.acceptedCureItemTypes
+            )
         );
 
-        Debug.Log(
-            "Symptoms:"
-        );
+        Debug.Log("Symptoms:");
 
         foreach (Symptoms symptom in data.symptoms)
         {

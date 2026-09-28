@@ -350,7 +350,6 @@ public class ZoomTarget : MonoBehaviour
     void ShowSymptomImage()
     {
         if (CustomerManager.Instance == null ||
-            SymptomImageDatabase.Instance == null ||
             ZoomInspectionDisplay.Instance == null)
             return;
 
@@ -363,11 +362,17 @@ public class ZoomTarget : MonoBehaviour
         bool isPresent =
             data.symptoms.Contains(symptomToCheck);
 
-        Sprite image =
-            SymptomImageDatabase.Instance.GetImage(
+        // 1. Try to get the image from the customer's custom overrides first
+        Sprite image = data.GetSymptomImage(symptomToCheck, isPresent);
+
+        // 2. If this customer doesn't have a custom override, fall back to the global database
+        if (image == null && SymptomImageDatabase.Instance != null)
+        {
+            image = SymptomImageDatabase.Instance.GetImage(
                 symptomToCheck,
                 isPresent
             );
+        }
 
         ZoomInspectionDisplay.Instance.Show(image);
     }

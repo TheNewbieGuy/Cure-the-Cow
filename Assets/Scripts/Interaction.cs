@@ -292,6 +292,15 @@ public class Interaction : MonoBehaviour
 
         if (bestSpot != null)
         {
+            // If this placement spot is a trash can, destroy the item instead of placing it
+            if (bestSpot.isTrashCan)
+            {
+                SFXManager.Instance.PlaySFX("Trash"); // Optional: plays a sound if you have one, or remove this line
+                Destroy(heldObject.gameObject);
+                heldObject = null;
+                return;
+            }
+
             Vector3 dropPosition =
                 bestSpot.transform.position +
                 Vector3.up * dropHeight;
@@ -312,7 +321,7 @@ public class Interaction : MonoBehaviour
                 rb.angularVelocity = Vector3.zero;
             }
 
-// Start pickup cooldown
+            // Start pickup cooldown
             pickupCooldowns[heldObject] = Time.time + pickupCooldown;
 
             heldObject = null;

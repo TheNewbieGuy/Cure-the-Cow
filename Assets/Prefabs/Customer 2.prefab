@@ -67,7 +67,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: cc78b452388c08c4ca7ccd79c68cda9f, type: 2}
+  - {fileID: 2100000, guid: 71e758a68d5050d4eb7f24a8cd741886, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -180,7 +180,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: b0bbb2dd36500f148b1f3fe14829fbd3, type: 2}
+  - {fileID: 2100000, guid: 0346dacef2c90b84ebcaa956255c781d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -236,9 +236,9 @@ GameObject:
   m_Component:
   - component: {fileID: 8725747729401329718}
   - component: {fileID: -4392443420116209096}
-  - component: {fileID: 2684283839758927880}
+  - component: {fileID: 9068508707592663261}
   m_Layer: 0
-  m_Name: Customer
+  m_Name: Customer 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -276,8 +276,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CustomerController
   moveSpeed: 2
-  turnSpeed: 300
---- !u!114 &2684283839758927880
+  rotationSpeed: 8
+--- !u!114 &9068508707592663261
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -286,20 +286,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 8503895738050048382}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0cea3ab80d0e37e4896ba249a10ab57f, type: 3}
+  m_Script: {fileID: 11500000, guid: 0416651d524095343abdccab23f79a85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CustomerData
   condition: 0
   symptoms: 
   acceptedCureItemTypes:
-  - Remedy
-  dialogLines:
-  - Test1
-  - Test2
-  customSymptomImages:
-  - symptom: 0
-    presentImage: {fileID: 0}
-    absentImage: {fileID: 0}
+  - Output
+  dialogLines: []
 --- !u!1001 &3039432550581984983
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -318,7 +312,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1061229412544873630, guid: e85b8dfb3ce0a044e8c899c1a1f87c04, type: 3}
       propertyPath: requiredItemType
-      value: 
+      value: Magnifying glass
       objectReference: {fileID: 0}
     - target: {fileID: 5598620253733934593, guid: e85b8dfb3ce0a044e8c899c1a1f87c04, type: 3}
       propertyPath: m_Name
@@ -386,14 +380,6 @@ PrefabInstance:
       propertyPath: zoomPoint
       value: 
       objectReference: {fileID: 2918823130546357490}
-    - target: {fileID: 1061229412544873630, guid: e85b8dfb3ce0a044e8c899c1a1f87c04, type: 3}
-      propertyPath: symptomToCheck
-      value: 8
-      objectReference: {fileID: 0}
-    - target: {fileID: 1061229412544873630, guid: e85b8dfb3ce0a044e8c899c1a1f87c04, type: 3}
-      propertyPath: requiredItemType
-      value: Magnifying glass
-      objectReference: {fileID: 0}
     - target: {fileID: 5598620253733934593, guid: e85b8dfb3ce0a044e8c899c1a1f87c04, type: 3}
       propertyPath: m_Name
       value: ZoomPoint (1)

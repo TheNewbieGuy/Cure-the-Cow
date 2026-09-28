@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class CraftingManager : MonoBehaviour
 {
+    public static CraftingManager Instance;
+
     [System.Serializable]
     public class Recipe
     {
@@ -24,9 +26,34 @@ public class CraftingManager : MonoBehaviour
 
     [Header("Spawn Result")]
     public Transform outputSpawnPoint;
+    
+    [Header("Output Placement Spot")]
+    [Tooltip("Assign the PlacementSpot component attached to the output spawn area so the game knows when the output has been cleared.")]
+    public PlacementSpot outputPlacementSpot;
+
+    void Awake()
+    {
+        Instance = this;
+    }
+
+    public bool HasOutput()
+    {
+        if (outputPlacementSpot != null)
+        {
+            return outputPlacementSpot.currentObject != null;
+        }
+        return false;
+    }
 
     public void Craft()
     {
+        // Block crafting if an output is already sitting on the output spot
+        if (HasOutput())
+        {
+            Debug.Log("Clear the output item before crafting again!");
+            return;
+        }
+
         List<string> currentIngredients =
             GetCurrentIngredients();
 
@@ -51,11 +78,17 @@ public class CraftingManager : MonoBehaviour
         );
         SFXManager.Instance.PlaySFX("Craft");
 
-        Instantiate(
+        PickupObject craftedItem = Instantiate(
             matchedRecipe.outputPrefab,
             outputSpawnPoint.position,
             outputSpawnPoint.rotation
         );
+
+        if (outputPlacementSpot != null)
+        {
+            outputPlacementSpot.currentObject = craftedItem;
+            craftedItem.currentSpot = outputPlacementSpot;
+        }
 
         ClearCraftingGrid();
     }
@@ -124,10 +157,7 @@ public class CraftingManager : MonoBehaviour
         {
             if (spot.currentObject != null)
             {
-                Destroy(
-                    spot.currentObject.gameObject
-                );
-
+                spot.currentObject.ReturnToOrigin();
                 spot.currentObject = null;
             }
         }
