@@ -31,6 +31,10 @@ public class CraftingManager : MonoBehaviour
     [Tooltip("Assign the PlacementSpot component attached to the output spawn area so the game knows when the output has been cleared.")]
     public PlacementSpot outputPlacementSpot;
 
+    [Header("Failure / Junk Output")]
+    [Tooltip("Prefab spawned when ingredients do not match any valid recipe (wrong mix, too many, or too few items).")]
+    public PickupObject failedRecipePrefab;
+
     void Awake()
     {
         Instance = this;
@@ -66,9 +70,32 @@ public class CraftingManager : MonoBehaviour
         Recipe matchedRecipe =
             FindMatchingRecipe(currentIngredients);
 
+        // If no recipe matches, handle it as a failed/invalid craft
         if (matchedRecipe == null)
         {
-            Debug.Log("Invalid recipe.");
+            Debug.Log("Invalid recipe. Spawning failed remedy.");
+            
+            if (SFXManager.Instance != null)
+            {
+                SFXManager.Instance.PlaySFX("Craft"); // You can change this to a fail sound if you add one
+            }
+
+            if (failedRecipePrefab != null)
+            {
+                PickupObject failedItem = Instantiate(
+                    failedRecipePrefab,
+                    outputSpawnPoint.position,
+                    outputSpawnPoint.rotation
+                );
+
+                if (outputPlacementSpot != null)
+                {
+                    outputPlacementSpot.currentObject = failedItem;
+                    failedItem.currentSpot = outputPlacementSpot;
+                }
+            }
+
+            ClearCraftingGrid();
             return;
         }
 
@@ -76,7 +103,11 @@ public class CraftingManager : MonoBehaviour
             "Crafted: " +
             matchedRecipe.outputPrefab.name
         );
-        SFXManager.Instance.PlaySFX("Craft");
+        
+        if (SFXManager.Instance != null)
+        {
+            SFXManager.Instance.PlaySFX("Craft");
+        }
 
         PickupObject craftedItem = Instantiate(
             matchedRecipe.outputPrefab,

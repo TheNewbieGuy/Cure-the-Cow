@@ -7399,6 +7399,7 @@ MonoBehaviour:
     outputPrefab: {fileID: 7365279494202670753, guid: 9aff5ef376659d84390c8a842e392b80, type: 3}
   outputSpawnPoint: {fileID: 692895735}
   outputPlacementSpot: {fileID: 0}
+  failedRecipePrefab: {fileID: 7365279494202670753, guid: 459c5b57c7997e04aac1663eab03bf75, type: 3}
 --- !u!114 &1624875462
 MonoBehaviour:
   m_ObjectHideFlags: 0
