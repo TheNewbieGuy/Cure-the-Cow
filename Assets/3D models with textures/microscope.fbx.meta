@@ -1,9 +1,69 @@
 fileFormatVersion: 2
-guid: 26367b3e5816a7e4583a9b246ead516b
+guid: db69dfa947244fb4b9b6b74c2fb530d0
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: clamp
+    second: {fileID: 2100000, guid: ea98332b831b1dc4d8472faedf1ea872, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: clmap
+    second: {fileID: 2100000, guid: 032079f5e13f9bf43b71ef595a442a67, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: looking glass
+    second: {fileID: 2100000, guid: 49b1c0ea89ce6fc4abba18e147d3e8e6, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: slide.001
+    second: {fileID: 2100000, guid: 7aac443f3f188a04884498f2de1327b4, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: stand
+    second: {fileID: 2100000, guid: c0c49a65cbaeaa64e84d970c2df31deb, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: table
+    second: {fileID: 2100000, guid: a9f3733fe325a834b978064cf8b418e0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: tube
+    second: {fileID: 2100000, guid: fcc743dd3cd24fe49a94c8f58a5311be, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: tube.001
+    second: {fileID: 2100000, guid: d077dea132637ad4587055a7611e7777, type: 2}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: metal_01_color_1k
+    second: {fileID: 2800000, guid: 65e89380d76412b4cb6b61058ce76fad, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: metal_01_metallic_1k
+    second: {fileID: 2800000, guid: f84346dc52d9e9648be85f3e0890f1d5, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: metal_01_normal_gl_1k
+    second: {fileID: 2800000, guid: 2e6db5ffcd6a2c14bbb88001788c6fce, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: metal_01_roughness_1k
+    second: {fileID: 2800000, guid: a03b6148a665ddc44bf8ee4ca376bd10, type: 3}
   materials:
     materialImportMode: 2
     materialName: 0

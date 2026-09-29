@@ -1,9 +1,54 @@
 fileFormatVersion: 2
-guid: 26367b3e5816a7e4583a9b246ead516b
+guid: 18de868b909016e4d9c2159a0715f600
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material.001
+    second: {fileID: 2100000, guid: 5522126595378f64aae99e85fa0e3af4, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material.002
+    second: {fileID: 2100000, guid: 7fa8f10750dc3364691c7389e0a1e20a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material.003
+    second: {fileID: 2100000, guid: 13649bdc9bc1c544990dcf16a5781c39, type: 2}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: concrete_wall_01_color_1k
+    second: {fileID: 2800000, guid: 5fdb3680088bce04da8875035a0d0df8, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: concrete_wall_01_normal_gl_1k
+    second: {fileID: 2800000, guid: 39a9471426dce48429e01d6b24a35db0, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: concrete_wall_01_roughness_1k
+    second: {fileID: 2800000, guid: 5f61cb9d43b11de41bec286c468ed2d4, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: plaster_wall_02_basecolor_1k
+    second: {fileID: 2800000, guid: fc4756ceee91c3e439a4a6c463761b7c, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: plaster_wall_02_normal_gl_1k
+    second: {fileID: 2800000, guid: deb1f17cfba93334ea1ff5a92d907d0a, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: plaster_wall_02_roughness_1k
+    second: {fileID: 2800000, guid: 9a2d8b8d9ad04c84f869ddc0c5510870, type: 3}
   materials:
     materialImportMode: 2
     materialName: 0

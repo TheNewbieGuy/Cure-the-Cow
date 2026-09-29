@@ -1,9 +1,24 @@
 fileFormatVersion: 2
-guid: 26367b3e5816a7e4583a9b246ead516b
+guid: 190c4f9de795d8d4896ded88d97bc762
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: wood_planks_03_color_1k
+    second: {fileID: 2800000, guid: 4475f2fa9ccfc304fbc178ceb19b5983, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: wood_planks_03_normal_gl_1k
+    second: {fileID: 2800000, guid: 1ebbfeade5a83bf4caa4f6162c8d25ad, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: wood_planks_03_roughness_1k
+    second: {fileID: 2800000, guid: 2134c93cff311524093bbbf36c9df593, type: 3}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -45,7 +60,7 @@ ModelImporter:
     importLights: 1
     nodeNameCollisionStrategy: 1
     fileIdsGeneration: 2
-    swapUVChannels: 0
+    swapUVChannels: 1
     generateSecondaryUV: 0
     useFileUnits: 1
     keepQuads: 0
