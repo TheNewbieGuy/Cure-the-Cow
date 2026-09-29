@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro; // Added for TextMeshPro support
 
 public class NightManager : MonoBehaviour
 {
@@ -23,7 +24,7 @@ public class NightManager : MonoBehaviour
 
     [Header("UI Transition References")]
     public CanvasGroup fadeCanvasGroup; 
-    public Text riskDisplayText;        
+    public TextMeshProUGUI riskDisplayText; // Updated to TextMeshProUGUI
     public float fadeDuration = 1.5f;
 
     // =========================================================

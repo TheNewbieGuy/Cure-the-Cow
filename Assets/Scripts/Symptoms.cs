@@ -5,8 +5,8 @@ public enum Symptoms
     Cough,
     Vomiting,
     Fatigue,
-    Aggression,
-    Swelling,
+    SkinBumps,
+    RunnyNose,
     Sneezing,
     WeightLoss,
     EyeDischarge

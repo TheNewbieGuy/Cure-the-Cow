@@ -236,7 +236,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8725747729401329718}
   - component: {fileID: -4392443420116209096}
-  - component: {fileID: 9068508707592663261}
+  - component: {fileID: 2684283839758927880}
   m_Layer: 0
   m_Name: Customer 2
   m_TagString: Untagged
@@ -276,8 +276,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CustomerController
   moveSpeed: 2
-  rotationSpeed: 8
---- !u!114 &9068508707592663261
+  turnSpeed: 300
+--- !u!114 &2684283839758927880
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -286,14 +286,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 8503895738050048382}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0416651d524095343abdccab23f79a85, type: 3}
+  m_Script: {fileID: 11500000, guid: 0cea3ab80d0e37e4896ba249a10ab57f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CustomerData
   condition: 0
   symptoms: 
   acceptedCureItemTypes:
-  - Output
-  dialogLines: []
+  - Remedy
+  dialogLines:
+  - Test1
+  - Test2
+  customSymptomImages:
+  - symptom: 8
+    presentImage: {fileID: 21300000, guid: bf3852a4139b3614989760babf089b6f, type: 3}
+    absentImage: {fileID: 0}
+  - symptom: 4
+    presentImage: {fileID: 21300000, guid: bf3852a4139b3614989760babf089b6f, type: 3}
+    absentImage: {fileID: 0}
 --- !u!1001 &3039432550581984983
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -308,7 +317,7 @@ PrefabInstance:
       objectReference: {fileID: 5410447672004505919}
     - target: {fileID: 1061229412544873630, guid: e85b8dfb3ce0a044e8c899c1a1f87c04, type: 3}
       propertyPath: symptomToCheck
-      value: 1
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 1061229412544873630, guid: e85b8dfb3ce0a044e8c899c1a1f87c04, type: 3}
       propertyPath: requiredItemType
@@ -380,6 +389,14 @@ PrefabInstance:
       propertyPath: zoomPoint
       value: 
       objectReference: {fileID: 2918823130546357490}
+    - target: {fileID: 1061229412544873630, guid: e85b8dfb3ce0a044e8c899c1a1f87c04, type: 3}
+      propertyPath: symptomToCheck
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 1061229412544873630, guid: e85b8dfb3ce0a044e8c899c1a1f87c04, type: 3}
+      propertyPath: requiredItemType
+      value: Magnifying glass
+      objectReference: {fileID: 0}
     - target: {fileID: 5598620253733934593, guid: e85b8dfb3ce0a044e8c899c1a1f87c04, type: 3}
       propertyPath: m_Name
       value: ZoomPoint (1)

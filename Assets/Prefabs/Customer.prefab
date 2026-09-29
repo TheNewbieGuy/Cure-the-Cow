@@ -297,8 +297,11 @@ MonoBehaviour:
   - Test1
   - Test2
   customSymptomImages:
-  - symptom: 0
-    presentImage: {fileID: 0}
+  - symptom: 8
+    presentImage: {fileID: 21300000, guid: bf3852a4139b3614989760babf089b6f, type: 3}
+    absentImage: {fileID: 0}
+  - symptom: 4
+    presentImage: {fileID: 21300000, guid: bf3852a4139b3614989760babf089b6f, type: 3}
     absentImage: {fileID: 0}
 --- !u!1001 &3039432550581984983
 PrefabInstance:
@@ -314,11 +317,11 @@ PrefabInstance:
       objectReference: {fileID: 5410447672004505919}
     - target: {fileID: 1061229412544873630, guid: e85b8dfb3ce0a044e8c899c1a1f87c04, type: 3}
       propertyPath: symptomToCheck
-      value: 1
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 1061229412544873630, guid: e85b8dfb3ce0a044e8c899c1a1f87c04, type: 3}
       propertyPath: requiredItemType
-      value: 
+      value: Magnifying glass
       objectReference: {fileID: 0}
     - target: {fileID: 5598620253733934593, guid: e85b8dfb3ce0a044e8c899c1a1f87c04, type: 3}
       propertyPath: m_Name
