@@ -10,7 +10,7 @@ public class PlacementSpot : MonoBehaviour
     [Tooltip("If true, placing an item here will instantly destroy (delete) it like a trash can.")]
     public bool isTrashCan = false;
 
-    [Tooltip("If true, this spot is part of the crafting grid and cannot accept items if an output is still waiting.")]
+    [Tooltip("If true, this spot is part of the crafting grid and cannot accept items if an output remedy still exists in the scene.")]
     public bool isCraftingGridSpot = false;
 
     [Header("Drop Settings")]
@@ -30,7 +30,7 @@ public class PlacementSpot : MonoBehaviour
             return currentObject == null && allowedItemTypes.Contains(obj.itemType);
         }
 
-        // If this is a crafting grid spot, block placement if an output item is still present
+        // If this is a crafting grid spot, block placement if any output/remedy still exists in the scene
         if (isCraftingGridSpot && CraftingManager.Instance != null && CraftingManager.Instance.HasOutput())
         {
             return false;

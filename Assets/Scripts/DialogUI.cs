@@ -2,14 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro; // Required for TextMeshPro
 
-// Simple click-through dialog box: shows one line at a time from a list,
-// a "Next" button advances to the next line, and the panel hides itself
-// once you've clicked past the last line.
-//
-// Uses UnityEngine.UI.Text/Button to match the rest of the project's UI
-// (SymptomUI, CursorManager). If your project actually uses TextMeshPro,
-// just change "Text dialogText" below to "TMP_Text dialogText".
 public class DialogUI : MonoBehaviour
 {
     public static DialogUI Instance;
@@ -18,8 +12,8 @@ public class DialogUI : MonoBehaviour
     [Tooltip("The root panel GameObject that gets shown/hidden.")]
     public GameObject dialogPanel;
 
-    [Tooltip("The text field the current line is written into.")]
-    public Text dialogText;
+    [Tooltip("The TextMeshPro text field the current line is written into.")]
+    public TextMeshProUGUI dialogText; // Changed from Text to TextMeshProUGUI
 
     [Tooltip("Button the player clicks to advance to the next line.")]
     public Button nextButton;
@@ -46,8 +40,6 @@ public class DialogUI : MonoBehaviour
     /// <summary>
     /// Shows the given lines one at a time and yields until the player has
     /// clicked through all of them (or immediately if the list is empty).
-    /// Call this from a coroutine, e.g.:
-    /// yield return StartCoroutine(DialogUI.Instance.ShowDialogRoutine(lines));
     /// </summary>
     public IEnumerator ShowDialogRoutine(List<string> lines)
     {
@@ -72,7 +64,7 @@ public class DialogUI : MonoBehaviour
             currentLines != null &&
             currentIndex < currentLines.Count)
         {
-            dialogText.text = currentLines[currentIndex];
+            dialogText.text = "'" + currentLines[currentIndex] + "'";
         }
     }
 

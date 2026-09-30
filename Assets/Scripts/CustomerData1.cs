@@ -29,10 +29,6 @@ public class CustomerData : MonoBehaviour
     [Header("Cure")]
     public List<string> acceptedCureItemTypes = new List<string>();
 
-    [Header("Intro Dialog")]
-    public List<string> dialogLines =
-        new List<string>();
-
     [Header("Custom Symptom Images (Optional)")]
     [Tooltip("Define unique present/absent images for this customer. If left empty, it falls back to the global SymptomImageDatabase.")]
     public List<CustomerSymptomImageOverride> customSymptomImages =

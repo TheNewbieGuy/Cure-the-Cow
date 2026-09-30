@@ -84,12 +84,10 @@ public class Interaction : MonoBehaviour
         if (CustomerManager.Instance == null || CustomerManager.Instance.currentState != CustomerManager.ClinicState.Inspection)
             return false;
 
-        // Check if customer has Fever symptom
         bool hasFever = customerData.symptoms.Contains(Symptoms.Fever);
 
-        // Update the TMP text on the thermometer
         heldObject.UpdateTemperatureDisplay(hasFever);
-        SFXManager.Instance.PlaySFX("Pick Up"); // Or a custom thermometer sound if you have one
+        SFXManager.Instance.PlaySFX("Pick Up");
 
         Debug.Log($"Thermometer used! Customer has Fever: {hasFever}");
 
@@ -107,7 +105,6 @@ public class Interaction : MonoBehaviour
 
         foreach (PickupObject pickup in pickups)
         {
-            // Held object should never highlight
             if (pickup == heldObject)
             {
                 SetOutlineColor(
@@ -129,7 +126,6 @@ public class Interaction : MonoBehaviour
                 new Vector2(screenPos.x, screenPos.y)
             );
 
-            // Must be within interaction range
             float worldDist = Vector3.Distance(
                 cam.transform.position,
                 pickup.transform.position
@@ -138,7 +134,6 @@ public class Interaction : MonoBehaviour
             if (worldDist > interactDistance)
                 continue;
 
-            // Optional cursor range limit
             if (dist > 100f)
                 continue;
 
@@ -149,7 +144,6 @@ public class Interaction : MonoBehaviour
             }
         }
 
-        // Reset previous outline
         if (currentHoveredObject != null &&
             currentHoveredObject != closestPickup)
         {
@@ -161,7 +155,6 @@ public class Interaction : MonoBehaviour
 
         currentHoveredObject = closestPickup;
 
-        // Highlight closest valid object
         if (currentHoveredObject != null)
         {
             SetOutlineColor(
@@ -229,32 +222,16 @@ public class Interaction : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// If the player is holding a givable item and clicks on the current
-    /// customer, hand it to CustomerManager as a cure attempt instead of
-    /// treating it as a normal grid placement. Returns true whenever the
-    /// item was handed off (right or wrong cure) or the item isn't givable
-    /// at all is NOT included here - see the isGivable check below, which
-    /// returns false so non-givable items fall through to TryPlace().
-    /// </summary>
     bool TryGiveToCustomer()
     {
-        // Items not flagged as givable (tools, decorations, etc.) should
-        // never be treated as a cure attempt - let them fall through to
-        // normal placement instead.
         if (!heldObject.isGivable)
             return false;
 
         Ray ray = cam.ScreenPointToRay(Mouse.current.position.ReadValue());
 
-        // Exclude interactLayer so the item currently being held (which is
-        // dragged right in front of the camera every frame) doesn't block
-        // the ray before it reaches the customer behind it.
         if (!Physics.Raycast(ray, out RaycastHit hit, interactDistance, ~interactLayer))
             return false;
 
-        // CustomerData lives on the customer root - GetComponentInParent
-        // covers cases where the collider is on a child (e.g. a hitbox).
         CustomerData customerData =
             hit.collider.GetComponentInParent<CustomerData>();
 
@@ -264,10 +241,6 @@ public class Interaction : MonoBehaviour
         if (CustomerManager.Instance == null)
             return false;
 
-        // TryGiveCure returns true for any *accepted* cure attempt - right
-        // or wrong - and only false if the attempt wasn't valid at all
-        // (e.g. not in Inspection state). Either way, a valid attempt
-        // uses up the item.
         bool cureAccepted =
             CustomerManager.Instance.TryGiveCure(heldObject);
 
@@ -295,10 +268,8 @@ public class Interaction : MonoBehaviour
             if (!spot.CanPlace(heldObject))
                 continue;
 
-            // Convert world position to screen position
             Vector3 screenPos = cam.WorldToScreenPoint(spot.transform.position);
 
-            // Ignore spots behind camera
             if (screenPos.z < 0f)
                 continue;
 
@@ -307,7 +278,6 @@ public class Interaction : MonoBehaviour
                 new Vector2(screenPos.x, screenPos.y)
             );
 
-            // Optional max placement range
             float worldDist = Vector3.Distance(
                 heldObject.transform.position,
                 spot.transform.position
@@ -327,16 +297,14 @@ public class Interaction : MonoBehaviour
 
         if (bestSpot != null)
         {
-            // If this placement spot is a trash can, destroy the item instead of placing it
             if (bestSpot.isTrashCan)
             {
-                SFXManager.Instance.PlaySFX("Trash"); // Optional: plays a sound if you have one, or remove this line
+                SFXManager.Instance.PlaySFX("Craft");
                 Destroy(heldObject.gameObject);
                 heldObject = null;
                 return;
             }
 
-            // Check whether to drop normally or spawn above and fall
             Vector3 dropPosition;
             if (bestSpot.spawnAboveAndFall)
             {
@@ -358,20 +326,18 @@ public class Interaction : MonoBehaviour
             if (rb != null)
             {
                 rb.isKinematic = false;
-
-                // Clear velocities so it falls cleanly
                 rb.linearVelocity = Vector3.zero;
                 rb.angularVelocity = Vector3.zero;
+
+                // Trigger 0.75s timer to switch to kinematic after it has time to drop/settle
+                heldObject.TriggerKinematicDelay(0.75f);
             }
 
-            // Start pickup cooldown
             pickupCooldowns[heldObject] = Time.time + pickupCooldown;
 
             heldObject = null;
         }
     }
-
-    
 
     void UpdateDraggedObject()
     {

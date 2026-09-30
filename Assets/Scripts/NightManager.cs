@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using TMPro; // Added for TextMeshPro support
 
 public class NightManager : MonoBehaviour
@@ -26,6 +27,17 @@ public class NightManager : MonoBehaviour
     public CanvasGroup fadeCanvasGroup; 
     public TextMeshProUGUI riskDisplayText; // Updated to TextMeshProUGUI
     public float fadeDuration = 1.5f;
+    public string mainMenuSceneName = "MainMenu";
+
+    [Header("Ending Canvases")]
+    [Tooltip("Canvas shown if global risk reaches 100% at the end of a night.")]
+    public GameObject instantGameOverCanvas;
+    [Tooltip("Canvas shown if final risk is exactly 0% after all nights.")]
+    public GameObject ending1PerfectCanvas;
+    [Tooltip("Canvas shown if final risk is under 30% after all nights.")]
+    public GameObject ending2GoodCanvas;
+    [Tooltip("Canvas shown if final risk is 30% or higher after all nights.")]
+    public GameObject ending3StandardCanvas;
 
     // =========================================================
     // NIGHT DATA
@@ -63,6 +75,12 @@ public class NightManager : MonoBehaviour
 
     void Start()
     {
+        // Ensure ending canvases are hidden at start
+        if (instantGameOverCanvas) instantGameOverCanvas.SetActive(false);
+        if (ending1PerfectCanvas) ending1PerfectCanvas.SetActive(false);
+        if (ending2GoodCanvas) ending2GoodCanvas.SetActive(false);
+        if (ending3StandardCanvas) ending3StandardCanvas.SetActive(false);
+
         StartNight();
     }
 
@@ -102,12 +120,6 @@ public class NightManager : MonoBehaviour
         globalRiskPercentage = Mathf.Clamp(globalRiskPercentage, 0f, 100f);
 
         Debug.Log($"Cure recorded: {(wasCorrect ? "CORRECT" : "INCORRECT")} | Global Risk: {globalRiskPercentage}%");
-
-        // Check immediate Game Over condition if risk hits 100%
-        if (globalRiskPercentage >= 100f)
-        {
-            TriggerGameOver();
-        }
     }
 
     public void ConsumeCustomer()
@@ -127,7 +139,7 @@ public class NightManager : MonoBehaviour
         // 1. Fade to Black
         yield return StartCoroutine(FadeScreen(0f, 1f, fadeDuration));
 
-        // 2. Display Risk Percentage on Screen
+        // 2. Display Risk Percentage on Screen while it's black
         if (riskDisplayText != null)
         {
             riskDisplayText.text = $"Global Risk: {globalRiskPercentage:F0}%";
@@ -142,16 +154,23 @@ public class NightManager : MonoBehaviour
             riskDisplayText.gameObject.SetActive(false);
         }
 
+        // 3. Check if global risk reached 100% by the end of this night
+        if (globalRiskPercentage >= 100f)
+        {
+            TriggerGameOver();
+            yield break;
+        }
+
         currentNight++;
 
-        // 3. Check if all 5 nights are finished
+        // 4. Check if all nights are finished
         if (currentNight >= nights.Count)
         {
             EvaluateFinalEndings();
             yield break;
         }
 
-        // 4. Fade back in for the next night
+        // If it's just a regular night transition, fade back in for the next night
         StartNight();
         yield return StartCoroutine(FadeScreen(1f, 0f, fadeDuration));
     }
@@ -166,7 +185,7 @@ public class NightManager : MonoBehaviour
 
         while (timer < duration)
         {
-            timer += Time.deltaTime;
+            timer += Time.unscaledDeltaTime; // Uses unscaled time so it works even if timeScale is 0
             fadeCanvasGroup.alpha = Mathf.Lerp(startAlpha, endAlpha, timer / duration);
             yield return null;
         }
@@ -180,27 +199,64 @@ public class NightManager : MonoBehaviour
 
     void TriggerGameOver()
     {
-        Debug.Log("GAME OVER: Global Risk reached 100%!");
-        // TODO: Handle Game Over scene loading or UI display here
+        Debug.Log("GAME OVER: Global Risk reached 100% at the end of the night!");
+        StartCoroutine(HandleEndingSequence(instantGameOverCanvas));
     }
 
     void EvaluateFinalEndings()
     {
-        Debug.Log("All 5 nights complete!");
+        Debug.Log("All nights complete! Evaluating final ending...");
+
+        GameObject selectedEndingCanvas = null;
 
         if (globalRiskPercentage <= 0f)
         {
-            Debug.Log("ENDING 1: Perfect Ending (0% Risk achieved via 5 flawless nights)!");
+            Debug.Log("ENDING 1: Perfect Ending (0% Risk achieved)!");
+            selectedEndingCanvas = ending1PerfectCanvas;
         }
         else if (globalRiskPercentage < 30f)
         {
             Debug.Log("ENDING 2: Good Ending (Under 30% Risk)!");
+            selectedEndingCanvas = ending2GoodCanvas;
         }
         else
         {
             Debug.Log("ENDING 3: Standard/Bad Ending (30% or higher Risk)!");
+            selectedEndingCanvas = ending3StandardCanvas;
         }
+
+        StartCoroutine(HandleEndingSequence(selectedEndingCanvas));
     }
+
+    IEnumerator HandleEndingSequence(GameObject canvasToShow)
+    {
+        Time.timeScale = 0f; // Freeze game actions underneath
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+
+        // 1. Screen is already black from the risk percentage screen. 
+        // Spawn/activate the ending canvas *behind* the black screen (while fadeCanvasGroup alpha is still 1).
+        if (canvasToShow != null)
+        {
+            canvasToShow.SetActive(true);
+        }
+
+        // 2. Fade the black screen away (from alpha 1 to 0) to reveal the ending underneath
+        yield return StartCoroutine(FadeScreen(1f, 0f, fadeDuration));
+
+        // 3. Show ending canvas for 5 seconds (using unscaled time since timeScale is 0)
+        yield return new WaitForSecondsRealtime(5f);
+
+        // 4. Fade back to black (alpha 0 to 1) to cover the ending panel
+        yield return StartCoroutine(FadeScreen(0f, 1f, fadeDuration));
+
+        // Restore time scale before changing scenes
+        Time.timeScale = 1f;
+
+        // Return to main menu scene
+        SceneManager.LoadScene(mainMenuSceneName);
+    }
+    
 
     public ConditionData GenerateCondition()
     {

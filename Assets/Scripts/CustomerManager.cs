@@ -76,7 +76,7 @@ public class CustomerManager : MonoBehaviour
                 Quaternion.Euler(0f, 180f, 0f)
             );
 
-        AssignCondition(currentCustomer);
+        AssignConditionAndDialog(currentCustomer);
 
         StartCoroutine(
             CustomerEnterRoutine()
@@ -102,17 +102,12 @@ public class CustomerManager : MonoBehaviour
 
         customerInside = true;
 
-        CustomerData data =
-            currentCustomer.GetComponent<CustomerData>();
-
-        if (DialogUI.Instance != null &&
-            data != null &&
-            data.dialogLines != null &&
-            data.dialogLines.Count > 0)
+        // Fetch dialogue lines compiled during AssignConditionAndDialog
+        if (DialogUI.Instance != null && currentCompiledDialogLines != null && currentCompiledDialogLines.Count > 0)
         {
             yield return StartCoroutine(
                 DialogUI.Instance.ShowDialogRoutine(
-                    data.dialogLines
+                    currentCompiledDialogLines
                 )
             );
         }
@@ -126,6 +121,8 @@ public class CustomerManager : MonoBehaviour
 
         busy = false;
     }
+
+    private List<string> currentCompiledDialogLines = new List<string>();
 
     // =========================================================
     // GIVE CURE
@@ -160,66 +157,22 @@ public class CustomerManager : MonoBehaviour
                 : "WRONG CURE GIVEN"
         );
 
+        // If the cure is correct, increase the score here directly
+        if (wasCorrectCure)
+        {
+            Debug.Log("Condition: " + data.condition);
+            NightManager.Instance.currentScore++;
+        }
+        else
+        {
+            Debug.Log("Incorrect Condition Cure. Correct Condition was: " + data.condition);
+        }
+
         StartCoroutine(
             CustomerExitRoutine(wasCorrectCure)
         );
 
         return true;
-    }
-
-    // =========================================================
-    // DIAGNOSIS
-    // =========================================================
-
-    void EvaluateDiagnosis()
-    {
-        CustomerData data =
-            currentCustomer.GetComponent<CustomerData>();
-
-        if (data == null)
-            return;
-
-        List<Symptoms> selectedSymptoms =
-            SymptomUI.Instance.GetSelectedSymptoms();
-
-        bool correct =
-            selectedSymptoms.Count ==
-            data.symptoms.Count;
-
-        if (correct)
-        {
-            foreach (Symptoms symptom in data.symptoms)
-            {
-                if (!selectedSymptoms.Contains(symptom))
-                {
-                    correct = false;
-                    break;
-                }
-            }
-        }
-
-        if (correct)
-        {
-            Debug.Log("CORRECT DIAGNOSIS");
-
-            Debug.Log(
-                "Condition: " +
-                data.condition
-            );
-
-            NightManager.Instance.currentScore++;
-        }
-        else
-        {
-            Debug.Log("WRONG DIAGNOSIS");
-
-            Debug.Log(
-                "Correct Condition: " +
-                data.condition
-            );
-        }
-
-        SymptomUI.Instance.ResetToggles();
     }
 
     // =========================================================
@@ -242,8 +195,6 @@ public class CustomerManager : MonoBehaviour
         NightManager.Instance.RecordCureResult(
             cureWasCorrect
         );
-
-        EvaluateDiagnosis();
 
         // Turn the customer around BEFORE moving.
         // Their X and Z rotation remain 0.
@@ -288,10 +239,10 @@ public class CustomerManager : MonoBehaviour
     }
 
     // =========================================================
-    // ASSIGN CONDITION
+    // ASSIGN CONDITION & DIALOGUE
     // =========================================================
 
-    void AssignCondition(
+    void AssignConditionAndDialog(
         CustomerController customer
     )
     {
@@ -332,10 +283,19 @@ public class CustomerManager : MonoBehaviour
                 selectedCondition.acceptedCureItemTypes
             );
 
-        data.dialogLines =
-            new List<string>(
-                selectedCondition.dialogLines
-            );
+        // Build dialogue dynamically based on the customer's symptoms
+        currentCompiledDialogLines = new List<string>();
+        if (SymptomDialogDatabase.Instance != null)
+        {
+            foreach (Symptoms symptom in data.symptoms)
+            {
+                string line = SymptomDialogDatabase.Instance.GetRandomDialogForSymptom(symptom);
+                if (!string.IsNullOrEmpty(line))
+                {
+                    currentCompiledDialogLines.Add(line);
+                }
+            }
+        }
 
         Debug.Log(
             "===== CUSTOMER ASSIGNED ====="
@@ -354,12 +314,12 @@ public class CustomerManager : MonoBehaviour
             )
         );
 
-        Debug.Log("Symptoms:");
+        Debug.Log("Symptoms & Dialogue:");
 
-        foreach (Symptoms symptom in data.symptoms)
+        for (int i = 0; i < data.symptoms.Count; i++)
         {
             Debug.Log(
-                "- " + symptom
+                $"- {data.symptoms[i]}"
             );
         }
 

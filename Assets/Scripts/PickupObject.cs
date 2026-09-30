@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using TMPro; // Uses standard TextMeshPro for 3D world objects
 
@@ -20,11 +21,16 @@ public class PickupObject : MonoBehaviour
     [HideInInspector]
     public Quaternion originalRotation;
 
+    private Rigidbody rb;
+    private Coroutine settleCoroutine;
+
     void Start()
     {
         // Save the starting position and rotation
         originalPosition = transform.position;
         originalRotation = transform.rotation;
+
+        rb = GetComponent<Rigidbody>();
 
         // Hide temperature text by default when spawned
         if (temperatureDisplayText != null)
@@ -33,12 +39,43 @@ public class PickupObject : MonoBehaviour
         }
     }
 
+    public void TriggerKinematicDelay(float delay)
+    {
+        if (rb == null) return;
+
+        if (settleCoroutine != null)
+        {
+            StopCoroutine(settleCoroutine);
+        }
+
+        settleCoroutine = StartCoroutine(SettleAfterDelay(delay));
+    }
+
+    IEnumerator SettleAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+            rb.isKinematic = true;
+        }
+
+        settleCoroutine = null;
+    }
+
     public void ReturnToOrigin()
     {
         transform.position = originalPosition;
         transform.rotation = originalRotation;
 
-        Rigidbody rb = GetComponent<Rigidbody>();
+        if (settleCoroutine != null)
+        {
+            StopCoroutine(settleCoroutine);
+            settleCoroutine = null;
+        }
+
         if (rb != null)
         {
             rb.isKinematic = false;
@@ -58,7 +95,6 @@ public class PickupObject : MonoBehaviour
             float rawTemp = Random.Range(39f, 41f);
             finalTemp = Mathf.RoundToInt(rawTemp);
             
-            // Safety check just in case: ensure fever is at least 38
             if (finalTemp < 38) finalTemp = 38;
         }
         else
@@ -66,10 +102,9 @@ public class PickupObject : MonoBehaviour
             float rawTemp = Random.Range(37f, 39f);
             finalTemp = Mathf.RoundToInt(rawTemp);
 
-            // Safety check: ensure normal temperatures never round up into the fever range (38+)
             if (finalTemp >= 38)
             {
-                finalTemp = 37; // Forces it to round down to a safe normal temperature
+                finalTemp = 37;
             }
         }
 

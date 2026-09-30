@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem; // Required for Keyboard input
 
 public class CraftingManager : MonoBehaviour
 {
@@ -40,21 +41,45 @@ public class CraftingManager : MonoBehaviour
         Instance = this;
     }
 
+    void Update()
+    {
+        // Press 'C' to trigger crafting
+        if (Keyboard.current != null && Keyboard.current.cKey.wasPressedThisFrame)
+        {
+            // Optional: Block crafting if game is paused or during specific UI states if needed
+            Craft();
+        }
+    }
+
+    // Checks if ANY crafted output or failed recipe item still exists anywhere in the scene
     public bool HasOutput()
     {
-        if (outputPlacementSpot != null)
+        PickupObject[] allPickups = FindObjectsOfType<PickupObject>();
+        foreach (var pickup in allPickups)
         {
-            return outputPlacementSpot.currentObject != null;
+            // Check if this pickup matches any recipe output prefab OR the failed recipe prefab
+            if (failedRecipePrefab != null && pickup.itemType == failedRecipePrefab.itemType)
+            {
+                return true;
+            }
+
+            foreach (var recipe in recipes)
+            {
+                if (recipe.outputPrefab != null && pickup.itemType == recipe.outputPrefab.itemType)
+                {
+                    return true;
+                }
+            }
         }
         return false;
     }
 
     public void Craft()
     {
-        // Block crafting if an output is already sitting on the output spot
+        // Block crafting if an output remedy already exists in the scene
         if (HasOutput())
         {
-            Debug.Log("Clear the output item before crafting again!");
+            Debug.Log("Clear or destroy the existing remedy before crafting again!");
             return;
         }
 
@@ -77,7 +102,7 @@ public class CraftingManager : MonoBehaviour
             
             if (SFXManager.Instance != null)
             {
-                SFXManager.Instance.PlaySFX("Craft"); // You can change this to a fail sound if you add one
+                SFXManager.Instance.PlaySFX("Craft");
             }
 
             if (failedRecipePrefab != null)
