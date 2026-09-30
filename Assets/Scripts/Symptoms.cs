@@ -7,7 +7,7 @@ public enum Symptoms
     Fatigue,
     SkinBumps,
     RunnyNose,
-    Sneezing,
+    Cells,
     WeightLoss,
     EyeDischarge
 }

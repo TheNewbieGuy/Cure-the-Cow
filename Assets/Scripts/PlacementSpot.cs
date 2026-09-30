@@ -13,6 +13,12 @@ public class PlacementSpot : MonoBehaviour
     [Tooltip("If true, this spot is part of the crafting grid and cannot accept items if an output is still waiting.")]
     public bool isCraftingGridSpot = false;
 
+    [Header("Drop Settings")]
+    [Tooltip("If true, the item will spawn above this spot and fall down using physics.")]
+    public bool spawnAboveAndFall = false;
+    [Tooltip("How high above the spot the item will spawn when 'Spawn Above And Fall' is enabled.")]
+    public float fallSpawnHeight = 1.5f;
+
     [HideInInspector]
     public PickupObject currentObject;
 

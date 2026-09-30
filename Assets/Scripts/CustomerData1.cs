@@ -13,6 +13,10 @@ public class CustomerData : MonoBehaviour
 
         [Tooltip("Shown when this specific customer does NOT have this symptom.")]
         public Sprite absentImage;
+
+        [Header("Panel Toggle")]
+        [Tooltip("Check this to display this symptom on the alternate panel instead of the main panel.")]
+        public bool useAlternatePanel;
     }
 
     [Header("Condition")]
@@ -34,17 +38,21 @@ public class CustomerData : MonoBehaviour
     public List<CustomerSymptomImageOverride> customSymptomImages =
         new List<CustomerSymptomImageOverride>();
 
-    /// <label>Gets custom image if defined, otherwise returns null for fallback.</label>
-    public Sprite GetSymptomImage(Symptoms symptom, bool isPresent)
+    /// <summary>
+    /// Gets custom image if defined, and outputs whether it should use the alternate panel.
+    /// </summary>
+    public Sprite GetSymptomImage(Symptoms symptom, bool isPresent, out bool useAlternatePanel)
     {
+        useAlternatePanel = false;
+
         foreach (var entry in customSymptomImages)
         {
             if (entry.symptom == symptom)
             {
+                useAlternatePanel = entry.useAlternatePanel;
                 return isPresent ? entry.presentImage : entry.absentImage;
             }
         }
         return null;
     }
 }
-

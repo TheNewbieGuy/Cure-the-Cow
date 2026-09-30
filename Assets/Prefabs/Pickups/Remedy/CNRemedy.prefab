@@ -127,7 +127,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d223e750bc705cd40ad0b45798ff20bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PickupObject
-  itemType: FMRemedy
+  itemType: CNRemedy
   isGivable: 1
   currentSpot: {fileID: 0}
   originalPosition: {x: 0, y: 0, z: 0}

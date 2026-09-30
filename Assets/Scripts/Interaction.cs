@@ -47,6 +47,10 @@ public class Interaction : MonoBehaviour
             {
                 TryPickup();
             }
+            else if (TryUseThermometer())
+            {
+                // Handled thermometer reading, do nothing else
+            }
             else if (!TryGiveToCustomer())
             {
                 // Only fall through to normal grid placement if we
@@ -59,6 +63,37 @@ public class Interaction : MonoBehaviour
 
         UpdateCursor();
         UpdateHoverOutline();
+    }
+
+    bool TryUseThermometer()
+    {
+        if (heldObject == null || heldObject.itemType != "Thermometer")
+            return false;
+
+        Ray ray = cam.ScreenPointToRay(Mouse.current.position.ReadValue());
+
+        if (!Physics.Raycast(ray, out RaycastHit hit, interactDistance, ~interactLayer))
+            return false;
+
+        CustomerData customerData =
+            hit.collider.GetComponentInParent<CustomerData>();
+
+        if (customerData == null)
+            return false;
+
+        if (CustomerManager.Instance == null || CustomerManager.Instance.currentState != CustomerManager.ClinicState.Inspection)
+            return false;
+
+        // Check if customer has Fever symptom
+        bool hasFever = customerData.symptoms.Contains(Symptoms.Fever);
+
+        // Update the TMP text on the thermometer
+        heldObject.UpdateTemperatureDisplay(hasFever);
+        SFXManager.Instance.PlaySFX("Pick Up"); // Or a custom thermometer sound if you have one
+
+        Debug.Log($"Thermometer used! Customer has Fever: {hasFever}");
+
+        return true;
     }
     void UpdateHoverOutline()
     {
@@ -301,9 +336,16 @@ public class Interaction : MonoBehaviour
                 return;
             }
 
-            Vector3 dropPosition =
-                bestSpot.transform.position +
-                Vector3.up * dropHeight;
+            // Check whether to drop normally or spawn above and fall
+            Vector3 dropPosition;
+            if (bestSpot.spawnAboveAndFall)
+            {
+                dropPosition = bestSpot.transform.position + Vector3.up * bestSpot.fallSpawnHeight;
+            }
+            else
+            {
+                dropPosition = bestSpot.transform.position + Vector3.up * dropHeight;
+            }
 
             heldObject.transform.position = dropPosition;
             heldObject.transform.rotation = bestSpot.transform.rotation;
@@ -317,6 +359,7 @@ public class Interaction : MonoBehaviour
             {
                 rb.isKinematic = false;
 
+                // Clear velocities so it falls cleanly
                 rb.linearVelocity = Vector3.zero;
                 rb.angularVelocity = Vector3.zero;
             }

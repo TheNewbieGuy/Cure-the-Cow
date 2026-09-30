@@ -362,19 +362,23 @@ public class ZoomTarget : MonoBehaviour
         bool isPresent =
             data.symptoms.Contains(symptomToCheck);
 
-        // 1. Try to get the image from the customer's custom overrides first
-        Sprite image = data.GetSymptomImage(symptomToCheck, isPresent);
+        Sprite image = null;
+        bool useAlternatePanel = false;
 
-        // 2. If this customer doesn't have a custom override, fall back to the global database
+        // 1. Try to get the image and alternate panel toggle from the customer's custom overrides first
+        image = data.GetSymptomImage(symptomToCheck, isPresent, out useAlternatePanel);
+
+        // 2. If this customer doesn't have a custom override, fall back to the global database (defaults to main panel)
         if (image == null && SymptomImageDatabase.Instance != null)
         {
             image = SymptomImageDatabase.Instance.GetImage(
                 symptomToCheck,
                 isPresent
             );
+            useAlternatePanel = false;
         }
 
-        ZoomInspectionDisplay.Instance.Show(image);
+        ZoomInspectionDisplay.Instance.Show(image, useAlternatePanel);
     }
 
 

@@ -1,43 +1,61 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-// Shows/hides the single on-screen inspection image while zoomed into a
-// ZoomTarget. One shared instance - individual zoom points don't need
-// their own Image reference.
+// Shows/hides inspection images on either the main panel or alternate panel while zoomed into a ZoomTarget.
 public class ZoomInspectionDisplay : MonoBehaviour
 {
     public static ZoomInspectionDisplay Instance;
 
-    [Header("References")]
-    public GameObject displayPanel;
-    public Image displayImage;
+    [Header("Main Panel References")]
+    public GameObject mainDisplayPanel;
+    public Image mainDisplayImage;
+
+    [Header("Alternate Panel References")]
+    public GameObject alternateDisplayPanel;
+    public Image alternateDisplayImage;
 
     void Awake()
     {
         Instance = this;
-
-        if (displayPanel != null)
-            displayPanel.SetActive(false);
+        HideAll();
     }
 
-    public void Show(Sprite sprite)
+    public void Show(Sprite sprite, bool useAlternatePanel)
     {
-        if (displayPanel == null || displayImage == null)
-            return;
+        HideAll();
 
         if (sprite == null)
-        {
-            Hide();
             return;
-        }
 
-        displayImage.sprite = sprite;
-        displayPanel.SetActive(true);
+        if (useAlternatePanel)
+        {
+            if (alternateDisplayPanel != null && alternateDisplayImage != null)
+            {
+                alternateDisplayImage.sprite = sprite;
+                alternateDisplayPanel.SetActive(true);
+            }
+        }
+        else
+        {
+            if (mainDisplayPanel != null && mainDisplayImage != null)
+            {
+                mainDisplayImage.sprite = sprite;
+                mainDisplayPanel.SetActive(true);
+            }
+        }
     }
 
     public void Hide()
     {
-        if (displayPanel != null)
-            displayPanel.SetActive(false);
+        HideAll();
+    }
+
+    private void HideAll()
+    {
+        if (mainDisplayPanel != null)
+            mainDisplayPanel.SetActive(false);
+
+        if (alternateDisplayPanel != null)
+            alternateDisplayPanel.SetActive(false);
     }
 }
